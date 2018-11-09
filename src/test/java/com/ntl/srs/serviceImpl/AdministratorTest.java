@@ -260,7 +260,7 @@ RouteBean rbb=new RouteBean("Ausr3255","Australia","Sri Lanka","4000",44000);
 		String dateOfBirth[]=dobirth.split("/");
 		LocalDate dat=LocalDate.of(Integer.parseInt(dateOfBirth[2]),Integer.parseInt(dateOfBirth[1]), Integer.parseInt(dateOfBirth[0]));
 		
-		ScheduleBean sb=new ScheduleBean("InAu2345","InAu4786","th3748",dat);
+		ScheduleBean sb=new ScheduleBean("InAu2346","InAu4786","th3748",dat);
 		ArrayList<ScheduleBean> schbean=new ArrayList<ScheduleBean>();
 		schbean.add(sb);
 		schedu=mock(ScheduleBeanDaoImpl.class);
@@ -268,7 +268,7 @@ RouteBean rbb=new RouteBean("Ausr3255","Australia","Sri Lanka","4000",44000);
 			when(schedu.findAll()).thenReturn(schbean);
 		
 		
-		AdministratorImpl admin=new AdministratorImpl(ship);
+		AdministratorImpl admin=new AdministratorImpl(schedu);
 		
 		ArrayList<ScheduleBean> result = admin.viewByAllSchedule();
 		

@@ -89,18 +89,18 @@ ReservationBeanDaoImpl pas=mock(ReservationBeanDaoImpl.class);
 
 	@Test
 	public void testCancelTicket() throws SQLException {
-		PassengerBean rb=new PassengerBean("InAu3456","InAu4763","Ram",32,"Male");
-		PassengerBean pb=new PassengerBean("InAu3456","InAu4763","Antara",22,"Female");
+		PassengerBean rb=new PassengerBean("InAu3457","InAu4763","Ram",32,"Male");
+		PassengerBean pb=new PassengerBean("InAu3457","InAu4763","Antara",22,"Female");
 		
 		PassengerBeanDaoImpl passen=mock(PassengerBeanDaoImpl.class);
 		
-		when(passen.allPass("InAu3456")).thenReturn(true);
+		when(passen.allPass("InAu3457")).thenReturn(true);
 		
 		
 		CustomerImpl cust=new CustomerImpl(passen);
 		
-		boolean result=cust.cancelTicket("InAu3456");
-		assertEquals(result,true);
+		boolean result=cust.cancelTicket("InAu3457");
+		assertEquals(true,result);
 	}
 
 	@Test
@@ -140,7 +140,7 @@ ReservationBeanDaoImpl pas=mock(ReservationBeanDaoImpl.class);
 	Map<ReservationBean,PassengerBean> m=new HashMap<ReservationBean,PassengerBean>();
 	
 	m=cust.viewTicket("InAu3456");
-	assertEquals(m,2);			//map doesnot insert different values to same key!
+	assertEquals(m.size(),1);			//map doesnot insert different values to same key!
 
 	
 	}
@@ -198,4 +198,10 @@ ReservationBeanDaoImpl pas=mock(ReservationBeanDaoImpl.class);
 		
 	}
 
+	
+	@Test
+	public void testValidation()
+	{
+		
+	}
 }

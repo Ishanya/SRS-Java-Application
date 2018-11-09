@@ -24,7 +24,7 @@ public class ProfileBean {
 	}
 
 	
-	public ProfileBean(String firstName, String lastName, LocalDate dateOfBirth, String gender, String street,
+	/*public ProfileBean(String firstName, String lastName, LocalDate dateOfBirth, String gender, String street,
 			String location, String city, String state, String pincode, String mobileNo, String emailID,
 			String password) {
 		super();
@@ -44,7 +44,7 @@ public class ProfileBean {
 	
 
 
-
+*/
 
 	public ProfileBean(String userID, String firstName, String lastName, LocalDate dateOfBirth, String gender,
 			String street, String location, String city, String state, String pincode, String mobileNo, String emailID
@@ -66,40 +66,11 @@ public class ProfileBean {
 	}
 	
 	
-	
-
-
-	/**
-	 * @param userID
-	 * @param firstName
-	 * @param lastName
-	 * @param dateOfBirth
-	 * @param gender
-	 * @param street
-	 * @param location
-	 * @param city
-	 * @param state
-	 * @param pincode
-	 * @param mobileNo
-	 * @param emailID
-	 * @param password
-	 */
 	public ProfileBean(String userID, String firstName, String lastName, LocalDate dateOfBirth, String gender,
 			String street, String location, String city, String state, String pincode, String mobileNo, String emailID,
 			String password) {
-		super();
-		this.userID = userID;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.dateOfBirth = dateOfBirth;
-		this.gender = gender;
-		this.street = street;
-		this.location = location;
-		this.city = city;
-		this.state = state;
-		this.pincode = pincode;
-		this.mobileNo = mobileNo;
-		this.emailID = emailID;
+		this(userID,firstName,lastName,dateOfBirth,gender,street,location,city,state,pincode,mobileNo,emailID);
+	
 		this.password = password;
 	}
 

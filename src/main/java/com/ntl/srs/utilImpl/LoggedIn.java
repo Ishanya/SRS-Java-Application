@@ -2,16 +2,21 @@ package com.ntl.srs.utilImpl;
 
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.ntl.srs.bean.CredentialsBean;
 import com.ntl.srs.daoImpl.CredentialsBeanDaoImpl;
 import com.ntl.srs.util.Authentication;
+
+import Client.Shiping;
 
 
 
 public class LoggedIn implements Authentication {
 
 	CredentialsBeanDaoImpl guc=new CredentialsBeanDaoImpl();
-
+	static Logger loggr=Logger.getLogger(LoggedIn.class);
+	
 	public LoggedIn( CredentialsBeanDaoImpl credit) {
 		super();
 		guc=credit;
@@ -19,8 +24,6 @@ public class LoggedIn implements Authentication {
 	}
 	
 	
-
-
 	public LoggedIn() {
 		super();
 	}
@@ -34,7 +37,7 @@ public class LoggedIn implements Authentication {
 	
 	public boolean authenticate(CredentialsBean credentialsBean) {
 		
-		
+		loggr.info("authentication done");
 		
 		credit=guc.findByID(credentialsBean.getUserID());
 		int flag=0;
@@ -43,7 +46,7 @@ public class LoggedIn implements Authentication {
 		
 				
 				if(credit!=null ) {
-					if(credit.getPassword().equals(credentialsBean.getPassword()))
+					if(credit.getPassword().equals(credentialsBean.getPassword()) )
 						{
 			//	guc.changeStatus(credentialsBean);
 					flag=1;
@@ -77,7 +80,7 @@ public class LoggedIn implements Authentication {
 	
 	public String authorize(String Userid) {
 		// TODO Auto-generated method stub
-		
+		loggr.info("authorized...");
 		//CredentialsBeanDaoImpl credImpl=new CredentialsBeanDaoImpl();
 		
 		if(credit.getUserID().equals(Userid))
@@ -92,7 +95,7 @@ public class LoggedIn implements Authentication {
 	
 	public boolean changeLoginStatus(CredentialsBean credentialsBean, int loginStatus) {
 		// TODO Auto-generated method stub
-		
+		loggr.info("Login Status Changed");
 		CredentialsBean credit=new CredentialsBean();
 		
 		credit=guc.findByID(credentialsBean.getUserID());

@@ -10,6 +10,12 @@ import com.ntl.UtilImpl.LoggedInTest;
 import com.ntl.UtilImpl.PaymentImplTest;
 import com.ntl.UtilImpl.SignedUpTest;
 import com.ntl.daoImpl.CredentialsBeanDaoImplTest;
+import com.ntl.daoImpl.PassengerBeanDaoImplTest;
+import com.ntl.daoImpl.PaymentDaoImplTest;
+import com.ntl.daoImpl.ProfileBeanDaoImplTest;
+import com.ntl.daoImpl.ReservationBeanDaoImplTest;
+import com.ntl.daoImpl.RouteBeanDaoImplTest;
+import com.ntl.daoImpl.ScheduleBeanDaoImplTest;
 import com.ntl.daoImpl.ShipBeanDaoImplTest;
 import com.ntl.srs.serviceImpl.AdministratorTest;
 import com.ntl.srs.serviceImpl.CustomerImpl;
@@ -32,7 +38,13 @@ import com.ntl.srs.serviceImpl.CustomerImplTest;
 	AdministratorTest.class,
 	CustomerImplTest.class,
 	ShipBeanDaoImplTest.class,
-	CredentialsBeanDaoImplTest.class
+	CredentialsBeanDaoImplTest.class,
+	ProfileBeanDaoImplTest.class,
+	PassengerBeanDaoImplTest.class,
+	PaymentDaoImplTest.class,
+	ReservationBeanDaoImplTest.class,
+	ScheduleBeanDaoImplTest.class,
+	RouteBeanDaoImplTest.class
 	
 })
 public class AppTest 

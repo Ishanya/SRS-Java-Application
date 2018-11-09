@@ -1,0 +1,6 @@
+projectKey=ShipRS:com.ntl.SRS
+serverUrl=http://localhost:9000
+serverVersion=6.7.5.38563
+dashboardUrl=http://localhost:9000/dashboard/index/ShipRS:com.ntl.SRS
+ceTaskId=AWb2-geNcEh506bTUtwF
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AWb2-geNcEh506bTUtwF

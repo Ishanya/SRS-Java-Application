@@ -6,6 +6,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import javax.sql.DataSource;
+
 import com.ntl.srs.bean.CredentialsBean;
 import com.ntl.srs.dao.CredentialsBeanDao;
 
@@ -22,22 +24,34 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 		
 			static String str[]=new String[2];
 			
-			static Connection con;
+			 Connection con;
 			
 
 			public CredentialsBeanDaoImpl() {
 				super();
+				 con=DBUtilImpl.getDBConnection("jdbc");
+			 
 			}
 
 
 
-
+			public CredentialsBeanDaoImpl(DataSource datas) {
+				super();
+				try {
+					con=datas.getConnection();
+				} catch (SQLException e) {
+					
+					e.printStackTrace();
+				}
+				
+			}
 
 
 
 	public String[] credentials(CredentialsBean credentialsBean){
 		
-		Connection con=DBUtilImpl.getDBConnection("jdbc");
+		// Connection con=DBUtilImpl.getDBConnection("jdbc");
+		
 		int flag=0;
 		try {	
 		stmt=con.createStatement();
@@ -66,6 +80,9 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 		{
 			sq.printStackTrace();
 		}
+		finally {
+			//DBUtilImpl.closing(con, stmt, null, rs);
+		}
 		return null;
 				
 			}
@@ -85,11 +102,12 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 	
 	public boolean updateCredentialsBean(CredentialsBean credentialsBean) {
 		//System.out.println("ishanya");
-		Connection con=DBUtilImpl.getDBConnection("jdbc");
+	//	Connection con=DBUtilImpl.getDBConnection("jdbc");
 		try {
 			int z=((credentialsBean.getLoginStatus()+1)%2);
-		ps=con.prepareStatement("update SRS_TBL_User_Credentials set LoginStatus="+z+" where UserId='"+credentialsBean.getUserID()+"'");
-		
+		ps=con.prepareStatement("update SRS_TBL_User_Credentials set LoginStatus=? where UserId=?");
+		ps.setInt(1, z);
+		ps.setString(2, credentialsBean.getUserID());
 		int state=ps.executeUpdate();
 			if(state>0)
 			{
@@ -102,6 +120,8 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 		catch(Exception e)
 		{
 			e.printStackTrace();
+		}finally {
+		//	DBUtilImpl.closing(con,null, ps,null);
 		}
 		
 		return false;
@@ -112,7 +132,7 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 	public CredentialsBean findByID(String id) {
 		// TODO Auto-generated method stub
 		
-		Connection con=DBUtilImpl.getDBConnection("jdbc");
+		//Connection con=DBUtilImpl.getDBConnection("jdbc");
 		
 		int flag=0;
 		try {	
@@ -140,6 +160,8 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 		catch(SQLException sq)
 		{
 			sq.printStackTrace();
+		}finally {
+			//DBUtilImpl.closing(con, stmt, null, rs);
 		}
 		
 		
@@ -155,7 +177,7 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 	
 	public boolean changingPassword(CredentialsBean cd)
 	{
-		Connection con=DBUtilImpl.getDBConnection("jdbc");
+		//Connection con=DBUtilImpl.getDBConnection("jdbc");
 		//System.out.println(cd.getPassword()+" "+cd.getUserID());
 		
 		try {
@@ -170,6 +192,8 @@ public class CredentialsBeanDaoImpl implements CredentialsBeanDao{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally {
+			//DBUtilImpl.closing(con, null,ps,null);
 		}
 		return false;
 		

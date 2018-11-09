@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
+import org.apache.log4j.Logger;
+
 import com.ntl.srs.bean.PassengerBean;
 import com.ntl.srs.bean.ReservationBean;
 import com.ntl.srs.bean.RouteBean;
@@ -16,6 +18,8 @@ import com.ntl.srs.daoImpl.PassengerBeanDaoImpl;
 import com.ntl.srs.daoImpl.ReservationBeanDaoImpl;
 import com.ntl.srs.service.Customer;
 
+import Client.Shiping;
+
 public class CustomerImpl implements Customer{
 ReservationBeanDaoImpl reservebean=new ReservationBeanDaoImpl();
 ArrayList<ScheduleBean>	albean=new ArrayList<ScheduleBean>();
@@ -23,6 +27,7 @@ AdministratorImpl al=new AdministratorImpl();
 PassengerBeanDaoImpl passbean=new PassengerBeanDaoImpl();
 static CustomerImpl cussto=null;
 
+static Logger loggr=Logger.getLogger(CustomerImpl.class);
 	
 	/**
  * 
@@ -58,7 +63,7 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 
 
 	public ArrayList<ScheduleBean> viewScheduleByRoute(String source, String destination, LocalDate date) throws SQLException {
-		
+		loggr.info("view Schedules using src and dest");
 		albean=reservebean.ScheduletoRoute(source, destination, date);
 		if(albean!=null)
 		{
@@ -69,7 +74,9 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 
 	
 	public String reserveTicket(ReservationBean reservationBean, ArrayList<PassengerBean> passengerBean) throws SQLException {
-//		ScheduleBean sc=new ScheduleBean();
+
+		loggr.info("Ticket reservation");
+		//		ScheduleBean sc=new ScheduleBean();
 //		
 //		
 //		sc=al.viewByScheduleId(reservationBean.getScheduleID());
@@ -103,15 +110,28 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 
 	
 	public boolean cancelTicket(String reservationId) throws SQLException {
+		loggr.info("Ticket Cancelation");
+		
+		if(reservebean.findByID(reservationId)!=null) {
 		if(passbean.allPass(reservationId))
 		{
 			return true;
 		}
 		return false;
 	}
+		System.out.println("so such reservation Id");
+		return false;
+	}
+	
+		
+	
 
 	
 	public Map<ReservationBean, PassengerBean> viewTicket(String reservationId) throws SQLException {
+		
+		loggr.info("view Ticket details");
+		
+		if(reservebean.findByID(reservationId)!=null) {
 		ArrayList<PassengerBean> al=new ArrayList<PassengerBean>();
 		al=passbean.findAllById(reservationId);
 		ReservationBean res=new ReservationBean();
@@ -131,6 +151,9 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 		}
 		return null;
 	}
+		System.out.println("so such reservation id");
+		return null;
+	}
 
 	
 	public Map<ReservationBean, PassengerBean> printTicket(String reservationId) {
@@ -140,6 +163,8 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 	
 	public boolean changeBookingStatus(ReservationBean reservationBean)
 	{
+		loggr.info("Changing booking status");
+		
 		if(reservebean.updateReservationBean(reservationBean)) {
 			return true;
 		}
@@ -147,6 +172,9 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 	}
 	
 	public String addingPassengers(ArrayList<PassengerBean> passengerBean) throws SQLException{
+		
+		loggr.info("Passenger added");
+		
 		String pPID=null;
 		//System.out.println(passengerBean.size());
 		for(PassengerBean pass:passengerBean)
@@ -156,7 +184,6 @@ public CustomerImpl(ReservationBeanDaoImpl rimpl,CustomerImpl cimpl) {
 			if(pPID==null)
 			{
 				return pPID;
-				
 			}
 		}
 		return pPID;

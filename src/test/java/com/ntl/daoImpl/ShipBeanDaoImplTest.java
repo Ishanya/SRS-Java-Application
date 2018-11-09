@@ -1,84 +1,115 @@
 package com.ntl.daoImpl;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
-import org.junit.After;
-import org.junit.AfterClass;
+import javax.sql.DataSource;
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.anyString;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
 
 import com.ntl.srs.bean.CredentialsBean;
 import com.ntl.srs.bean.ShipBean;
 import com.ntl.srs.daoImpl.CredentialsBeanDaoImpl;
 import com.ntl.srs.daoImpl.ShipBeanDaoImpl;
+import com.ntl.srs.utilImpl.DBUtilImpl;
+
+import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
+import org.mockito.Mock;
+import org.mockito.internal.util.reflection.Fields;
+
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 
 public class ShipBeanDaoImplTest {
+	
+	
+
+    DataSource mockDataSource=mock(DataSource.class);
+    Connection mockConn=mock(Connection.class);
+    PreparedStatement mockPreparedStmnt=mock(PreparedStatement.class);
+    Statement mockCreateStmt=mock(Statement.class);
+    ResultSet mockResultSet=mock(ResultSet.class);
 
 	ShipBean shipbean=new ShipBean("As8796","Austin",2541,876);
-	ShipBeanDaoImpl ship;
+	//ShipBeanDaoImpl ship;
+		 @Before
+	    public void setUp() throws SQLException {
+	//	 when(mockDataSource.getDBConnection("jdbc")).thenReturn(mockConn);
+		 
+		// ship=new ShipBeanDaoImpl(dbutil);
+		 
+		 
+	    //    doNothing().when(mockConn).commit();
+			 when(mockDataSource.getConnection()).thenReturn(mockConn);
+	        when(mockConn.prepareStatement(anyString())).thenReturn(mockPreparedStmnt);
+	        doNothing().when(mockPreparedStmnt).setString(anyInt(), anyString());
+	        doNothing().when(mockPreparedStmnt).setInt(anyInt(), anyInt());
+	        when(mockPreparedStmnt.executeUpdate()).thenReturn(1);
+	        when(mockPreparedStmnt.executeQuery()).thenReturn(mockResultSet);
+	       // when(mockPreparedStmnt.getGeneratedKeys()).thenReturn(mockResultSet);
+	        when(mockResultSet.next()).thenReturn(Boolean.TRUE, Boolean.FALSE);
+	        
+	        when(mockResultSet.getString(1)).thenReturn("As8796");
+	        when(mockResultSet.getString(2)).thenReturn("Austin");
+	        when(mockResultSet.getInt(3)).thenReturn(2541);
+	        when(mockResultSet.getInt(4)).thenReturn(876);
+	        when(mockResultSet.first()).thenReturn(true);
+	    }
 	
 	@Test
 	public void testCreateShipBean() throws SQLException {
-
 		
-		ship=mock(ShipBeanDaoImpl.class);
+		ShipBeanDaoImpl ship=new ShipBeanDaoImpl(mockDataSource);
 		
-		when(ship.createShipBean(shipbean)).thenReturn("success");// this is just to test DAO method before testing the actual Authenticate method
-		
-	
-		String result=ship.createShipBean(shipbean);
-		
-		assertEquals(result,"success");
+		assertEquals("success",ship.createShipBean(shipbean));
 	}
 
-	@Test
+//	@Test
 	public void testDeleteShipBean() {
 	//	fail("Not yet implemented");
 	}
 
 	@Test
 	public void testUpdateShipBean() throws SQLException {
-ship=mock(ShipBeanDaoImpl.class);
+		ShipBeanDaoImpl ship=new ShipBeanDaoImpl(mockDataSource);
 		
-		when(ship.updateShipBean(shipbean)).thenReturn(true);// this is just to test DAO method before testing the actual Authenticate method
-		
-	
-		boolean result=ship.updateShipBean(shipbean);
-		
-		assertEquals(result,true);
+		assertEquals(true,ship.updateShipBean(shipbean));
 	}
 
 	@Test
 	public void testFindByID() throws SQLException {
-		ship=mock(ShipBeanDaoImpl.class);
-		
-		when(ship.findByID(shipbean.getShipID())).thenReturn(shipbean);// this is just to test DAO method before testing the actual Authenticate method
-		
-	
-		ShipBean result=ship.findByID(shipbean.getShipID());
-		
-		assertEquals(result.getShipID(),shipbean.getShipID());
+		ShipBeanDaoImpl ship=new ShipBeanDaoImpl(mockDataSource);
+		ship.createShipBean(shipbean);
+		assertEquals(shipbean.getShipID(),ship.findByID(shipbean.getShipID()).getShipID());
 	}
 
 	@Test
 	public void testFindAll() throws SQLException {
-		ship=mock(ShipBeanDaoImpl.class);
+		ShipBeanDaoImpl ship=new ShipBeanDaoImpl(mockDataSource);
+		//ship.createShipBean(shipbean);
+		ArrayList<ShipBean> al=new ArrayList<ShipBean>();
+		al.add(shipbean);
 		
-		ArrayList<ShipBean> arr=new ArrayList<ShipBean>();
-		arr.add(shipbean);
-		
-		when(ship.findAll()).thenReturn(arr);// this is just to test DAO method before testing the actual Authenticate method
-		
-	
-		ArrayList<ShipBean> result=ship.findAll();
-		
-		assertEquals(result.size(),1);
+		assertEquals(al.size(),ship.findAll().size());
 	}
+	
+	
+
 
 }

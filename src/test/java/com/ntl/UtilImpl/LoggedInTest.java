@@ -38,6 +38,8 @@ public class LoggedInTest {
 	@Test
 	 public void testAuthenticate() {
 		cred=mock(CredentialsBeanDaoImpl.class);
+		
+		CredentialsBean creditt=new CredentialsBean("Is1112","Ishanya@333","A",0);
 		when(cred.findByID("Is1111")).thenReturn(new CredentialsBean("Is1111","Ishanya@333","A",0));// this is just to test DAO method before testing the actual Authenticate method
 		
 		LoggedIn log=new LoggedIn(cred);
@@ -45,6 +47,19 @@ public class LoggedInTest {
 		boolean result = log.authenticate(new CredentialsBean("Is1111","Ishanya@333","A",0));
 		
 		assertTrue(result);
+		
+		
+		when(cred.findByID("Is1112")).thenReturn(null);// this is just to test DAO method before testing the actual Authenticate method
+		
+	
+		boolean resultnew = log.authenticate(creditt);
+		
+		assertFalse(resultnew);
+	
+		
+		
+		
+		
 	}
 	
 	

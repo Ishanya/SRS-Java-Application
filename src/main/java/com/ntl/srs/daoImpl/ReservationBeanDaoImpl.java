@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
+import javax.sql.DataSource;
+
 import com.ntl.srs.bean.PaymentBean;
 import com.ntl.srs.bean.ReservationBean;
 import com.ntl.srs.bean.ScheduleBean;
@@ -19,16 +21,36 @@ import com.ntl.srs.utilImpl.DBUtilImpl;
 
 public class ReservationBeanDaoImpl implements ReservationBeanDao{
 
-	Connection con=DBUtilImpl.getDBConnection("jdbc");
+	Connection con;
+	
 	PreparedStatement ps=null;
 	ResultSet rs=null;
 	
 	
+	public ReservationBeanDaoImpl() {
+		super();
+		con=DBUtilImpl.getDBConnection("jdbc");
+	}
 	
-	public String createReservationBean(ReservationBean reservationBean) throws SQLException {
+	public ReservationBeanDaoImpl(DataSource datasource) {
+		super();
+		try {
+			con=datasource.getConnection();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
+	public String createReservationBean(ReservationBean reservationBean)  {
 		
+		int show=0;
+		
+		try {
+			 
 		ps=con.prepareStatement("insert into srs_tbl_reservation values(?,?,?,?,?,?,?,?)");
-		ps.setNString(1, reservationBean.getReservationID());
+		ps.setString(1, reservationBean.getReservationID());
 		ps.setString(2, reservationBean.getScheduleID());
 		ps.setString(3, reservationBean.getUserID());
 		ps.setDate(4, Date.valueOf(reservationBean.getBookingDate()));
@@ -36,11 +58,14 @@ public class ReservationBeanDaoImpl implements ReservationBeanDao{
 		ps.setInt(6, reservationBean.getNoOfSeats());
 		ps.setDouble(7, reservationBean.getTotalFare());
 		ps.setString(8, reservationBean.getBookingStatus());
+	
+		 show=ps.executeUpdate();
 		
-		int show=ps.executeUpdate();
-		
-		
-		
+		}
+		catch(SQLException e) {
+			System.out.println(e);
+		}
+		//DBUtilImpl.closing(con, null, ps,null);
 		
 		if(show>0)
 		{
@@ -57,11 +82,13 @@ public class ReservationBeanDaoImpl implements ReservationBeanDao{
 
 	
 	public boolean updateReservationBean(ReservationBean reservationBean) {
-		System.out.println("in changing");
+		//System.out.println("in changing");
 		try {
+			// Connection con=DBUtilImpl.getDBConnection("jdbc");
 			String stat="confirm";
-		ps=con.prepareStatement("update SRS_TBL_reservation set BookingStatus='"+stat+"' where reservationId='"+reservationBean.getReservationID()+"'");
-		
+		ps=con.prepareStatement("update SRS_TBL_reservation set BookingStatus=? where reservationId=?");
+		ps.setString(1, stat);
+		ps.setString(2, reservationBean.getReservationID());
 		int state=ps.executeUpdate();
 			if(state>0)
 			{
@@ -74,13 +101,18 @@ public class ReservationBeanDaoImpl implements ReservationBeanDao{
 		catch(Exception e)
 		{
 			e.printStackTrace();
+		}finally {
+			//DBUtilImpl.closing(con, null, ps,null);
 		}
 		
 		return false;
 	}
 
 	
-	public ReservationBean findByID(String id) throws SQLException {
+	public ReservationBean findByID(String id)  {
+		
+		try {
+			 //Connection con=DBUtilImpl.getDBConnection("jdbc");
 		ps=con.prepareStatement("select * from srs_tbl_reservation where ReservationId='"+id+"'");
 		rs=ps.executeQuery();
 		while(rs.next())
@@ -96,9 +128,14 @@ public class ReservationBeanDaoImpl implements ReservationBeanDao{
 			LocalDate localDate5 = localDateTimee.toLocalDate();
 		
 		ReservationBean rebean=new ReservationBean(rs.getString(1),rs.getString(2),rs.getString(3),localDate4,localDate5,rs.getInt(6),rs.getDouble(7),rs.getString(8));
-		
+	//	DBUtilImpl.closing(con, null, ps,rs);
 			return rebean;
 		}
+		}
+		catch(SQLException e) {
+			System.out.println(e);
+		}
+		//DBUtilImpl.closing(con, null, ps,rs);
 		return null;
 	}
 
@@ -108,11 +145,13 @@ public class ReservationBeanDaoImpl implements ReservationBeanDao{
 		return null;
 	}
 	
-	public ArrayList<ScheduleBean> ScheduletoRoute(String src,String dest,LocalDate start) throws SQLException
+	public ArrayList<ScheduleBean> ScheduletoRoute(String src,String dest,LocalDate start)
 	{
 		int flag=0;
 		ArrayList<ScheduleBean> sch=new ArrayList<ScheduleBean>();
 		ScheduleBean sb=null;
+		try {
+			// Connection con=DBUtilImpl.getDBConnection("jdbc");
 		ps=con.prepareStatement("select sch.ScheduleId,sch.ShipId,sch.RouteId from srs_tbl_schedule sch inner join srs_tbl_route rot on sch.routeId=rot.routeId where rot.source='"+src+"' and rot.Destination='"+dest+"' and sch.startDate='"+Date.valueOf(start)+"'");
 		rs=ps.executeQuery();
 		
@@ -125,8 +164,13 @@ public class ReservationBeanDaoImpl implements ReservationBeanDao{
 		{
 			flag=1;
 		}
+		}catch(SQLException e) {
+			System.out.println(e);
+		}
+		//DBUtilImpl.closing(con, null, ps,rs);
 		if(flag==1)
 		{
+			
 			return sch;
 		}
 		return null;

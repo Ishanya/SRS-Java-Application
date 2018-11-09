@@ -38,7 +38,7 @@ public class SignedUpTest {
 	public void testLogin() {
 		
 		CredentialsBean cdf=new CredentialsBean("Go4372","Govind@123","C",0);
-		
+		CredentialsBean cdfnew=new CredentialsBean("Go4327","Govind@333","A",0);
 		//cred=mock(CredentialsBeanDaoImpl.class);
 		
 		boolean value=true;
@@ -60,10 +60,18 @@ public class SignedUpTest {
 		
 		assertEquals(result,"C");
 		
+		
+		when(log.authenticate(cdfnew)).thenReturn(value);
+		when(log.authorize("Go4327")).thenReturn("A");
+		when(log.changeLoginStatus(cdfnew,0)).thenReturn(value);
+		String resultnew = sign.login(cdfnew);
+		
+		assertEquals(resultnew,"A");
+		
 	}
 
 	
-	
+
 	
 	@Test
 	public void testLogout() {

@@ -18,28 +18,26 @@ import static org.mockito.ArgumentMatchers.anyString;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ntl.srs.bean.PaymentBean;
+import com.ntl.srs.daoImpl.CredentialsBeanDaoImpl;
+import com.ntl.srs.daoImpl.PaymentDaoImpl;
+
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+public class PaymentDaoImplTest {
 
-import com.ntl.srs.bean.CredentialsBean;
-import com.ntl.srs.daoImpl.CredentialsBeanDaoImpl;
-import com.ntl.srs.daoImpl.ShipBeanDaoImpl;
-import com.ntl.srs.util.DBUtil;
-
-public class CredentialsBeanDaoImplTest {
 	 DataSource mockDataSource=mock(DataSource.class);
 	    Connection mockConn=mock(Connection.class);
 	    PreparedStatement mockPreparedStmnt=mock(PreparedStatement.class);
 	    Statement mockCreateStmt=mock(Statement.class);
 	    ResultSet mockResultSet=mock(ResultSet.class);
 
-	CredentialsBean credi=new CredentialsBean("Is1111","Ishanya@333","A",0);
-	
-	CredentialsBeanDaoImpl cred;
-	 @Before
+	    PaymentBean payment=new PaymentBean("123454","2014-02-02","2019-02-03",50000,"Is3456");
+	    
+	    @Before
 	    public void setUp() throws SQLException {
 	//	 when(mockDataSource.getDBConnection("jdbc")).thenReturn(mockConn);
 		 
@@ -59,75 +57,32 @@ public class CredentialsBeanDaoImplTest {
 	       // when(mockPreparedStmnt.getGeneratedKeys()).thenReturn(mockResultSet);
 	        when(mockResultSet.next()).thenReturn(Boolean.TRUE, Boolean.FALSE);
 	        
-	        when(mockResultSet.getString(1)).thenReturn("Is1111");
-	        when(mockResultSet.getString(2)).thenReturn("Ishanya@333");
-	        when(mockResultSet.getString(3)).thenReturn("A");
-	        when(mockResultSet.getInt(4)).thenReturn(0);
+	        when(mockResultSet.getString(1)).thenReturn("123454");
+	        when(mockResultSet.getString(2)).thenReturn("2014-02-02");
+	        when(mockResultSet.getString(3)).thenReturn("2019-02-03");
+	        when(mockResultSet.getInt(4)).thenReturn(50000);
+	        when(mockResultSet.getString(3)).thenReturn("Is3456");
 	    }
-	
+	    
+	    
 	@Test
-	public void testCredentialsBeanDaoImpl() {
-		//fail("Not yet implemented");
+	public void testCreatePaymentBean() {
+		
+PaymentDaoImpl pay=new PaymentDaoImpl(mockDataSource);
+
+assertEquals("success",pay.createPaymentBean(payment));
 	}
 
 	@Test
-	public void testCredentials() {
-		//CredentialsBean credi=new CredentialsBean("Is1111","Ishanya@333","A",0);
+	public void testUpdatePaymentBean() {
 		
-		
-		String str[]=new String[2];
-		str[0]="A";
-		str[1]=""+0;
-		
-		CredentialsBeanDaoImpl credit=new CredentialsBeanDaoImpl(mockDataSource);
-	
-		String[] result=credit.credentials(credi);
-		
-		assertEquals("A",result[0]);
-		
-		
-	}
-
-	@Test
-	public void testUpdateCredentialsBean() {
-//CredentialsBean credi=new CredentialsBean("Is1111","Ishanya@333","A",0);
-		
-CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl(mockDataSource);
-
-assertEquals(true,cred.updateCredentialsBean(credi));
 	}
 
 	@Test
 	public void testFindByID() {
-		
-		
-CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl(mockDataSource);
+		PaymentDaoImpl pay=new PaymentDaoImpl(mockDataSource);
 
-assertEquals(credi.getUserID(),cred.findByID(credi.getUserID()).getUserID());
-	}
-	
-	
-	@Test
-	public void testFindAll() {
-		//fail("Not yet implemented");
-	}
-
-	@Test
-	public void testChangingPassword() {
-		
-CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl(mockDataSource);
-
-assertEquals(true,cred.changingPassword(credi));
-	}
-
-	@Test
-	public void testCreateCredentialsBean() {
-		//fail("Not yet implemented");
-	}
-
-	@Test
-	public void testDeleteCredentialsBean() {
-		//fail("Not yet implemented");
+		assertEquals(payment.getBalance(),pay.findByID(payment.getUserId(), payment.getCreditCard()).getBalance());
 	}
 
 }

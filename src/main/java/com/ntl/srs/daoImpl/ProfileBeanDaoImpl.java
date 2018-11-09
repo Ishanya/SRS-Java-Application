@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 
+import javax.sql.DataSource;
+
 import com.ntl.srs.bean.CredentialsBean;
 import com.ntl.srs.bean.ProfileBean;
 import com.ntl.srs.dao.ProfileBeanDao;
@@ -21,8 +23,24 @@ import com.ntl.srs.utilImpl.DBUtilImpl;
 
 public class ProfileBeanDaoImpl  implements ProfileBeanDao{
 	
-	
-	
+	Connection con;
+	public ProfileBeanDaoImpl() {
+		super();
+		con=DBUtilImpl.getDBConnection("jdbc");
+	}
+
+
+
+	public ProfileBeanDaoImpl(DataSource datas) {
+		super();
+		try {
+			con=datas.getConnection();
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
+		
+	}
 	
 
 	
@@ -33,10 +51,10 @@ public class ProfileBeanDaoImpl  implements ProfileBeanDao{
 		 ResultSet rs;
 		 
 		 
-			Connection con=DBUtilImpl.getDBConnection("jdbc");
+			
 		try {
 		
-			
+			// Connection con=DBUtilImpl.getDBConnection("jdbc");
 			//System.out.println("hum mei h dum");
 			
 			PreparedStatement pss=con.prepareStatement("insert into SRS_TBL_User_Credentials values (?,?,?,?)");
@@ -71,7 +89,7 @@ public class ProfileBeanDaoImpl  implements ProfileBeanDao{
 				return "success";
 			}
 			else {
-				System.out.println("hii");
+				//System.out.println("hii");
 				return null;
 			}
 			
@@ -94,12 +112,12 @@ public class ProfileBeanDaoImpl  implements ProfileBeanDao{
 
 	
 	public boolean updateProfileBean(ProfileBean ProfileBean) {
-
-Connection con=DBUtilImpl.getDBConnection("jdbc");
-		
+	
+//Connection con=DBUtilImpl.getDBConnection("jdbc");
+PreparedStatement ps=null;
 		try {
 			int z=0;
-			PreparedStatement ps=con.prepareStatement("update SRS_TBL_User_Credentials set LoginStatus="+z+" where UserId='"+ProfileBean.getUserID()+"'");
+			 ps=con.prepareStatement("update SRS_TBL_User_Credentials set LoginStatus="+z+" where UserId='"+ProfileBean.getUserID()+"'");
 			int change=ps.executeUpdate();
 			if(change>0)
 			{
@@ -111,14 +129,16 @@ Connection con=DBUtilImpl.getDBConnection("jdbc");
 		{
 			e.printStackTrace();
 		}
-		
+		finally {
+	//		DBUtilImpl.closing(con, null, ps,null);
+		}
 		return false;
 	
 	}
 
 	
 	public ProfileBean findByID(String id) {
-Connection con=DBUtilImpl.getDBConnection("jdbc");
+//Connection con=DBUtilImpl.getDBConnection("jdbc");
 		Statement stmt=null;
 		ResultSet rs=null;
 		int flag=0;
@@ -152,6 +172,9 @@ Connection con=DBUtilImpl.getDBConnection("jdbc");
 		catch(SQLException sq)
 		{
 			sq.printStackTrace();
+		}
+		finally {
+	//		DBUtilImpl.closing(con, stmt,null,rs);
 		}
 		
 		

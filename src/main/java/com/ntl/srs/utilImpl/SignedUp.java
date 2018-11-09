@@ -1,6 +1,9 @@
 package com.ntl.srs.utilImpl;
 
 import java.util.Random;
+import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import com.ntl.srs.bean.CredentialsBean;
 import com.ntl.srs.bean.ProfileBean;
@@ -9,9 +12,11 @@ import com.ntl.srs.daoImpl.ProfileBeanDaoImpl;
 import com.ntl.srs.util.Authentication;
 import com.ntl.srs.util.User;
 
+import Client.Shiping;
+
 public class SignedUp implements User{
 LoggedIn log = new LoggedIn();
-
+static Logger loggr=Logger.getLogger(SignedUp.class);
 CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl();
 	/**
  * 
@@ -53,10 +58,15 @@ public SignedUp(LoggedIn logindao) {
 }
 
 	public String login(CredentialsBean credit) {
+		loggr.info("Logging in");
+		CredentialsBeanDaoImpl cr=new CredentialsBeanDaoImpl();
+		CredentialsBean cdre=new CredentialsBean();
+		cdre=cr.findByID(credit.getUserID());
 		
+	if(cdre!=null) {
 		if(log.authenticate(credit))
 		{
-			if(credit.getLoginStatus()==0) {
+			if(cdre.getLoginStatus()==0) {
 			String userType=log.authorize(credit.getUserID());
 			 log.changeLoginStatus(credit,credit.getLoginStatus());
 			 return userType;
@@ -69,7 +79,10 @@ public SignedUp(LoggedIn logindao) {
 		else {
 			return "invalid";
 		}
-		
+	}
+	else {
+		return "invalid";
+	}
 	}
 
 	/*
@@ -93,7 +106,7 @@ public SignedUp(LoggedIn logindao) {
 	
 	public boolean logout(String userId) {
 		//System.out.println("welcome");
-	
+		loggr.info("Logging out");
 		CredentialsBean prof=new CredentialsBean();
 		 prof=cred.findByID(userId);
 		// System.out.println("gtyu");
@@ -117,7 +130,7 @@ public SignedUp(LoggedIn logindao) {
 	
 	public String changePassword(CredentialsBean credentialsBean, String newPassword) {
 		// TODO Auto-generated method stub
-		
+		loggr.info("Changing Password");
 		
 	//	CredentialsBeanDaoImpl cred = new CredentialsBeanDaoImpl();
 		//credentialsBean.setPassword(newPassword);
@@ -140,7 +153,7 @@ public SignedUp(LoggedIn logindao) {
 //		Random rand = new Random();
 //	//	profileBean.setUserID(profileBean.getFirstName().substring(0, 2)+String.format("%04d", rand.nextInt(10000)));
 //		System.out.println("please NOTE UR UNIQUE ID: "+profileBean.getUserID());
-		
+		loggr.info("registering....");
 		
 		String uid=profile.createProfileBean(profileBean);
 		if(uid!=null)
@@ -151,6 +164,12 @@ public SignedUp(LoggedIn logindao) {
 			
 			return null;
 		}
+		
+	}
+	
+	public boolean validating(String value) {
+		boolean result=Pattern.matches("[A-Za-z]{2,}",value);
+		return result;
 		
 	}
 

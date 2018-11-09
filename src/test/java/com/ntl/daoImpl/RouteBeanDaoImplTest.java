@@ -1,10 +1,12 @@
 package com.ntl.daoImpl;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import javax.sql.DataSource;
@@ -18,28 +20,27 @@ import static org.mockito.ArgumentMatchers.anyString;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ntl.srs.bean.RouteBean;
+import com.ntl.srs.daoImpl.ProfileBeanDaoImpl;
+import com.ntl.srs.daoImpl.RouteBeanDaoImpl;
+
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
-import com.ntl.srs.bean.CredentialsBean;
-import com.ntl.srs.daoImpl.CredentialsBeanDaoImpl;
-import com.ntl.srs.daoImpl.ShipBeanDaoImpl;
-import com.ntl.srs.util.DBUtil;
+public class RouteBeanDaoImplTest {
 
-public class CredentialsBeanDaoImplTest {
 	 DataSource mockDataSource=mock(DataSource.class);
 	    Connection mockConn=mock(Connection.class);
 	    PreparedStatement mockPreparedStmnt=mock(PreparedStatement.class);
 	    Statement mockCreateStmt=mock(Statement.class);
 	    ResultSet mockResultSet=mock(ResultSet.class);
-
-	CredentialsBean credi=new CredentialsBean("Is1111","Ishanya@333","A",0);
-	
-	CredentialsBeanDaoImpl cred;
-	 @Before
+	    
+	    RouteBean route=new RouteBean("InSr1234","India","Sri Lanka","1200",20000);
+	    
+	    @Before
 	    public void setUp() throws SQLException {
 	//	 when(mockDataSource.getDBConnection("jdbc")).thenReturn(mockConn);
 		 
@@ -58,76 +59,51 @@ public class CredentialsBeanDaoImplTest {
 	        when(mockPreparedStmnt.executeQuery()).thenReturn(mockResultSet);
 	       // when(mockPreparedStmnt.getGeneratedKeys()).thenReturn(mockResultSet);
 	        when(mockResultSet.next()).thenReturn(Boolean.TRUE, Boolean.FALSE);
+	        when(mockResultSet.first()).thenReturn(true);
+	        when(mockResultSet.getString(1)).thenReturn("InSr1234");
+	        when(mockResultSet.getString(2)).thenReturn("India");
+	        when(mockResultSet.getString(3)).thenReturn("Sri Lanka");
 	        
-	        when(mockResultSet.getString(1)).thenReturn("Is1111");
-	        when(mockResultSet.getString(2)).thenReturn("Ishanya@333");
-	        when(mockResultSet.getString(3)).thenReturn("A");
-	        when(mockResultSet.getInt(4)).thenReturn(0);
+	        when(mockResultSet.getString(4)).thenReturn("1200");
+	        when(mockResultSet.getInt(5)).thenReturn(20000);
 	    }
-	
+
+
 	@Test
-	public void testCredentialsBeanDaoImpl() {
-		//fail("Not yet implemented");
+	public void testCreateRouteBean() {
+		RouteBeanDaoImpl routebean=new RouteBeanDaoImpl(mockDataSource);
+		
+		assertEquals("success",routebean.createRouteBean(route));
 	}
 
 	@Test
-	public void testCredentials() {
-		//CredentialsBean credi=new CredentialsBean("Is1111","Ishanya@333","A",0);
-		
-		
-		String str[]=new String[2];
-		str[0]="A";
-		str[1]=""+0;
-		
-		CredentialsBeanDaoImpl credit=new CredentialsBeanDaoImpl(mockDataSource);
-	
-		String[] result=credit.credentials(credi);
-		
-		assertEquals("A",result[0]);
-		
-		
+	public void testDeleteRouteBean() {
+		RouteBeanDaoImpl routebean=new RouteBeanDaoImpl(mockDataSource);
+		ArrayList<String> al=new ArrayList<String>();
+		al.add("InSr1234");
+		assertEquals(1,routebean.deleteRouteBean(al));
 	}
 
 	@Test
-	public void testUpdateCredentialsBean() {
-//CredentialsBean credi=new CredentialsBean("Is1111","Ishanya@333","A",0);
-		
-CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl(mockDataSource);
+	public void testUpdateRouteBean() {
+		RouteBeanDaoImpl routebean=new RouteBeanDaoImpl(mockDataSource);
 
-assertEquals(true,cred.updateCredentialsBean(credi));
+		assertEquals(true,routebean.updateRouteBean(route));
 	}
 
 	@Test
 	public void testFindByID() {
-		
-		
-CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl(mockDataSource);
+		RouteBeanDaoImpl routebean=new RouteBeanDaoImpl(mockDataSource);
 
-assertEquals(credi.getUserID(),cred.findByID(credi.getUserID()).getUserID());
+		assertEquals(route.getFare(),routebean.findByID(route.getRouteID()).getFare());
 	}
-	
-	
+
 	@Test
 	public void testFindAll() {
-		//fail("Not yet implemented");
-	}
-
-	@Test
-	public void testChangingPassword() {
-		
-CredentialsBeanDaoImpl cred=new CredentialsBeanDaoImpl(mockDataSource);
-
-assertEquals(true,cred.changingPassword(credi));
-	}
-
-	@Test
-	public void testCreateCredentialsBean() {
-		//fail("Not yet implemented");
-	}
-
-	@Test
-	public void testDeleteCredentialsBean() {
-		//fail("Not yet implemented");
+		RouteBeanDaoImpl routebean=new RouteBeanDaoImpl(mockDataSource);
+		ArrayList<RouteBean> al=new ArrayList<RouteBean>();
+		al.add(route);
+		assertEquals(al.size(),routebean.findAll().size());
 	}
 
 }

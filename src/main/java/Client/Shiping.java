@@ -12,6 +12,8 @@ import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.apache.log4j.Logger;
+
 import com.ntl.srs.bean.CredentialsBean;
 import com.ntl.srs.bean.PassengerBean;
 import com.ntl.srs.bean.PaymentBean;
@@ -20,6 +22,7 @@ import com.ntl.srs.bean.ReservationBean;
 import com.ntl.srs.bean.RouteBean;
 import com.ntl.srs.bean.ScheduleBean;
 import com.ntl.srs.bean.ShipBean;
+import com.ntl.srs.daoImpl.CredentialsBeanDaoImpl;
 import com.ntl.srs.daoImpl.ReservationBeanDaoImpl;
 import com.ntl.srs.daoImpl.RouteBeanDaoImpl;
 import com.ntl.srs.daoImpl.ScheduleBeanDaoImpl;
@@ -50,6 +53,8 @@ public class Shiping {
 	
 	ReservationBeanDaoImpl re=new ReservationBeanDaoImpl();
 	
+	static Logger loggr=Logger.getLogger(Shiping.class);
+	
 	public static void main(String z[]) throws ClassNotFoundException, IOException, SQLException
 	{
 		System.out.println("hello");
@@ -62,6 +67,7 @@ public class Shiping {
 	
 	public boolean getData() throws IOException, ClassNotFoundException, SQLException
 	{
+		loggr.info("checking whether it is existing user!");
 		Shiping user=new Shiping();
 		System.out.println("Are you an existing User? (yes/no/out)");
 		String choose=sc.nextLine();
@@ -91,6 +97,7 @@ public class Shiping {
 	
 	public boolean getLogin() throws ClassNotFoundException, IOException, SQLException
 	{
+		loggr.info("Logging in");
 		Shiping use=new Shiping();
 		
 		System.out.println("enter Id");
@@ -100,7 +107,8 @@ public class Shiping {
 		String pass=sc.nextLine();
 	
 		credit=new CredentialsBean(lid,pass);
-		
+//		CredentialsBeanDaoImpl cr=new CredentialsBeanDaoImpl();
+//		cr.findByID(lid);
 		String result=signup.login(credit);
 		//System.out.println(result);
 		if(result.equals("A"))
@@ -245,7 +253,7 @@ public class Shiping {
 						
 					}
 				else{
-					System.out.println("something wrong input");
+					System.out.println(" wrong input");
 					admn=true;
 				}
 				}
@@ -303,7 +311,9 @@ public class Shiping {
 					 ans=use.passengerInput(reId,reser.getNoOfSeats());
 					if(ans!=null)
 					{
-					cust.addingPassengers(ans);
+					if(cust.addingPassengers(ans)!=null) {
+						System.out.println("Yours Seats are reserved. Thankyou");
+					}
 					}
 				}
 				custm=true;
@@ -374,14 +384,30 @@ public class Shiping {
 	*/
 	public boolean getSignup() throws IOException, ClassNotFoundException
 	{
+		loggr.info("Signing UP");
 		System.out.println("Enter information in standard format");
 		
+		boolean a=true;
+		String fname=null;
+		while(a) {
 		System.out.println("enter Firstname");
-		String fname=sc.nextLine();
+		 fname=sc.nextLine();
+		 if(signup.validating(fname)) {
+			 a=false;
+		 }
+		}
 		//profile.setFirstName(fname);
 		
+		
+		boolean b=true;
+		String lname=null;
+		while(b) {
 		System.out.println("enter Lastname");
-		String lname=sc.nextLine();
+		 lname=sc.nextLine();
+		 if(signup.validating(lname)) {
+			 b=false;
+		 }
+		}
 		//profile.setPassword(lname);
 		
 		boolean toCheckDate=true;
@@ -398,25 +424,59 @@ public class Shiping {
 		LocalDate dob=LocalDate.of(Integer.parseInt(dateOfBirth[2]),Integer.parseInt(dateOfBirth[1]), Integer.parseInt(dateOfBirth[0]));
 		//profile.setDateOfBirth(dob);
 		
-		System.out.println("enter gender");
-		String gender=sc.nextLine();
+		boolean c=true;
+		String gender=null;
+		while(c) {
+		System.out.println("enter gender(Male/Female)");
+		 gender=sc.nextLine();
+		 if(signup.validating(gender)) {
+			 c=false;
+		 }
+		}
 		//profile.setGender(gender);
 		
+		boolean d=true;
+		String street=null;
+		while(d) {
 		System.out.println("enter Street");
-		String street=sc.nextLine();
+		 street=sc.nextLine();
+		 if(signup.validating(street)) {
+			 d=false;
+		 }
+		}
 	//	profile.setStreet(street);
 		
+		boolean e=true;
+		String location =null;
+		while(e) {
 		System.out.println("enter Location");
-		String location=sc.nextLine();
+		 location=sc.nextLine();
+		 if(signup.validating(location)) {
+			 e=false;
+		 }
+		}
 //		profile.setLocation(location);
 		
+		boolean f=true;
+		String city=null;
+		while(f) {
 		System.out.println("enter city");
-		String city=sc.nextLine();
+		 city=sc.nextLine();
+		 if(signup.validating(city)) {
+			 f=false;
+		 }
+		}
 	//	profile.setCity(city);
-		
+		boolean g=true;
+		String state=null;
+		while(g) {
 		System.out.println("enter state");
-		String state=sc.nextLine();
-	//	profile.setState(state);
+		state=sc.nextLine();
+		 if(signup.validating(state)) {
+			 g=false;
+		 }
+		}
+		//	profile.setState(state);
 		
 		String pincode=null;
 		boolean toCheckPincode=true;
@@ -485,6 +545,8 @@ public class Shiping {
 	
 	public boolean changingPassword(CredentialsBean cb) throws IOException, ClassNotFoundException
 	{
+		loggr.info("Changing Password");
+		
 		System.out.println("enter old password");
 		String passwd=sc.nextLine();
 		//profile.setGender(gender);
@@ -526,9 +588,17 @@ public class Shiping {
 	public boolean shipAdd() throws SQLException
 	{
 		
+		loggr.info("Adding ships");
 		
+		boolean h=true;
+		String shipName=null;
+		while(h) {
 		System.out.println("enter Ship Name");
-		String shipName=sc.nextLine();
+		 shipName=sc.nextLine();
+		 if(signup.validating(shipName)) {
+			 h=false;
+		 }
+		}
 	//	profile.setStreet(street);
 		
 		System.out.println("enter Seating Capacity");
@@ -556,14 +626,22 @@ public class Shiping {
 
 	public boolean shipModify() throws SQLException
 	{
+		loggr.info("Modifying Ships");
 		System.out.println("enter Ship ID you wanna modify");
 		String shipId=sc.nextLine();
 		ShipBean ship=admin.viewByShipId(shipId);
 		
 		if(ship!=null) {
 			
+			boolean i=true;
+			String shipName=null;
+			while(i) {
 		System.out.println("enter Ship Name");
-		String shipName=sc.nextLine();
+		 shipName=sc.nextLine();
+		 if(signup.validating(shipName)) {
+			 i=false;
+		 }
+			}
 		ship.setShipName(shipName);
 		
 		System.out.println("enter Seating Capacity");
@@ -589,19 +667,54 @@ public class Shiping {
 	
 	public boolean scheduleAdd() throws SQLException
 	{
+		loggr.info("Adding Schedule for ship");
 		
-		
+		boolean j=true;
+		String ShipId=null;
+		while(j) {
 		System.out.println("enter ShipId");
-		String ShipId=sc.nextLine();
-	
+		 ShipId=sc.nextLine();
+		 if(signup.validating(ShipId)) {
+			 j=false;
+		 }
+		}
 		
+		ShipBean swbean=admin.viewByShipId(ShipId);
+		if(swbean==null)
+		{
+			System.out.println("this shipId doesnot match");
+			return false;
+		}
+	
+		boolean k=true;
+		String RouteId=null;
+		while(k) {
 		System.out.println("enter RouteId");
-		String RouteId=sc.nextLine();
+		 RouteId=sc.nextLine();
+		 if(signup.validating(RouteId)) {
+			 k=false;
+		 }
+		}
+		RouteBean rbean=admin.viewByRouteId(RouteId);
+		if(rbean==null)
+		{
+			System.out.println("this routeId doesnot match");
+			return false;
+		}
+		
+
 
 		
-		
+		boolean toCheckDates=true;
+		String stdate=null;
+		while(toCheckDates) {
 		System.out.println("Starting Date in format (dd/mm/yyyy)");
-		String stdate=sc.nextLine();
+		 stdate=sc.nextLine();
+		 if(Pattern.matches("(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((21|20)\\d\\d)",stdate))
+			 {
+				 toCheckDates=false;
+			 }
+		}
 		String startd[]=stdate.split("/");
 		LocalDate startDate=LocalDate.of(Integer.parseInt(startd[2]),Integer.parseInt(startd[1]), Integer.parseInt(startd[0]));
 	
@@ -623,6 +736,7 @@ public class Shiping {
 	
 	public boolean scheduleModify() throws SQLException
 	{
+		loggr.info("Modifying schedule");
 		System.out.println("enter Schedule ID you wanna modify");
 		String scheduleId=sc.nextLine();
 		ScheduleBean sched=admin.viewByScheduleId(scheduleId);
@@ -635,7 +749,7 @@ public class Shiping {
 		sched.setShipID(shipId);
 		else {
 			System.out.println("this shipId doesnot match");
-			return true;
+			return false;
 		}
 		
 		System.out.println("enter Route Id");
@@ -647,15 +761,23 @@ public class Shiping {
 		}
 		else {
 			System.out.println("this routeId doesnot match");
-			return true;
+			return false;
 		}
 		
 		
+		boolean toCheckDatete=true;
+		String stdatete=null;
+		while(toCheckDatete) {
 		System.out.println("Starting Date in format (dd/mm/yyyy)");
-		String stdate=sc.nextLine();
-		String startd[]=stdate.split("/");
-		LocalDate startDate=LocalDate.of(Integer.parseInt(startd[2]),Integer.parseInt(startd[1]), Integer.parseInt(startd[0]));
-		sched.setStartDate(startDate);
+		 stdatete=sc.nextLine();
+		 if(Pattern.matches("(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((20|21)\\d\\d)",stdatete))
+			 {
+				 toCheckDatete=false;
+			 }
+		}
+		String startdte[]=stdatete.split("/");
+		LocalDate startDatete=LocalDate.of(Integer.parseInt(startdte[2]),Integer.parseInt(startdte[1]), Integer.parseInt(startdte[0]));
+		sched.setStartDate(startDatete);
 		
 		if(admin.modifySchedule(sched)) {
 			
@@ -669,6 +791,7 @@ public class Shiping {
 	
 	public boolean scheduleDelete() throws SQLException
 	{
+		loggr.info("Deleting Schedule");
 		ArrayList<String> al=new ArrayList<String>();
 		System.out.println("wanna delete any schedule?");
 		String reply=sc.nextLine();
@@ -700,19 +823,33 @@ public class Shiping {
 	}
 	public boolean routeAdd() throws SQLException
 	{
+		loggr.info("Adding route");
 		
-		
+		boolean l=true;
+		String source=null;
+		while(l) {
 		System.out.println("enter source");
-		String source=sc.nextLine();
-	
+		source=sc.nextLine();
+		 if(signup.validating(source)) {
+			 l=false;
+		 }
+		}
 		
+		
+		boolean m=true;
+		String dest=null;
+		while(m) {
 		System.out.println("enter destination");
-		String dest=sc.nextLine();
-
+		 dest=sc.nextLine();
+		 if(signup.validating(dest)) {
+			 m=false;
+		 }
+		}
 		
 		System.out.println("enter TravelDistance");
 		String travelDist=sc.nextLine();
 	
+		
 		System.out.println("enter Fare");
 		int fare=sc.nextInt();
 		
@@ -730,17 +867,35 @@ public class Shiping {
 	
 	public boolean routeModify() throws SQLException
 	{
+		loggr.info("Modifying route");
 		System.out.println("enter route ID you wanna modify");
 		String routeId=sc.nextLine();
 		RouteBean rot=admin.viewByRouteId(routeId);
 		
 		if(rot!=null) {
+			
+			
+			boolean n=true;
+			String source=null;
+			while(n) {
 		System.out.println("enter source");
-		String source=sc.nextLine();
+		 source=sc.nextLine();
+		 if(signup.validating(source)) {
+			 n=false;
+		 }
+			}
 		rot.setSource(source);
 		
+		
+		boolean p=true;
+		String dest=null;
+		while(p){
 		System.out.println("enter destination");
-		String dest=sc.nextLine();
+		 dest=sc.nextLine();
+		 if(signup.validating(dest)) {
+			 p=false;
+		 }
+		}
 		rot.setDestination(dest);
 
 		System.out.println("enter travel Duration");
@@ -765,6 +920,7 @@ public class Shiping {
 	
 	public boolean routeDelete() throws SQLException
 	{
+		loggr.info("Deleting Route");
 		String id="";
 		System.out.println("wanna delete any schedule?");
 		String reply=sc.nextLine();
@@ -801,6 +957,7 @@ public class Shiping {
 	
 	public boolean allShips() throws SQLException
 	{
+		loggr.info("View All Ships ");
 		ArrayList<ShipBean> al=admin.viewByAllShips();
 		for(ShipBean i:al)
 		{
@@ -811,6 +968,7 @@ public class Shiping {
 	
 	public boolean allRoutes() throws SQLException
 	{
+		loggr.info("View All Routes");
 		ArrayList<RouteBean> al=admin.viewByAllRoute();
 		for(RouteBean i:al)
 		{
@@ -821,6 +979,7 @@ public class Shiping {
 	
 	public boolean allSchedule() throws SQLException
 	{
+		loggr.info("View all schedules");
 		ArrayList<ScheduleBean> al=admin.viewByAllSchedule();
 		for(ScheduleBean i:al)
 		{
@@ -831,6 +990,7 @@ public class Shiping {
 	
 	public String reserveTicket() throws SQLException 
 	{
+		loggr.info("Reserving Tickets");
 		Shiping spp=new Shiping();
 		ArrayList<ScheduleBean> alsche=new ArrayList();
 		int flag=0;
@@ -841,13 +1001,32 @@ public class Shiping {
 		System.out.println("enter destination");
 		String dest=sc.nextLine();
 		
-		System.out.println("enter date");
-		String date=sc.nextLine();
-		String sdate[]=date.split("/");
-		LocalDate startDate=LocalDate.of(Integer.parseInt(sdate[2]),Integer.parseInt(sdate[1]),Integer.parseInt(sdate[0]));
+		boolean toCheck=true;
+		String dates=null;
+		while(toCheck) {
+		System.out.println("Enter date (dd/mm/yyyy)");
+		 dates=sc.nextLine();
+	 if(Pattern.matches("(0?[1-9]|[12][0-9]|3[01])/(0?[1-9]|1[012])/((20|21)\\d\\d)",dates))
+			 {
+				 toCheck=false;
+			 }
+		}
+		String sdates[]=dates.split("/");
+		LocalDate startDate=LocalDate.of(Integer.parseInt(sdates[2]),Integer.parseInt(sdates[1]), Integer.parseInt(sdates[0]));
+	
 		
+		
+//		System.out.println("enter date");
+//		String date=sc.nextLine();
+//		String sdate[]=date.split("/");
+//		LocalDate startDate=LocalDate.of(Integer.parseInt(sdate[2]),Integer.parseInt(sdate[1]),Integer.parseInt(sdate[0]));
+//		
 		alsche=cust.viewScheduleByRoute(src, dest, startDate);
-		
+		if(alsche==null)
+		{
+			System.out.println("So Ships available for such requirements!");
+			return null;
+		}
 		for(ScheduleBean sb:alsche)
 		{
 			System.out.println(sb.getScheduleID()+" route: "+sb.getRouteID()+" ship:"+sb.getShipID());
@@ -924,9 +1103,10 @@ public class Shiping {
 		rtbn=admin.viewByRouteId(schbean.getRouteID());
 		if(schbean!=null)
 		{
+			
 		System.out.println("no Of seats");
 		int seats=sc.nextInt();
-		
+	
 		Random rand = new Random();
 		String reserid=rtbn.getSource().substring(0, 2)+rtbn.getDestination().substring(0, 2)+String.format("%04d", rand.nextInt(10000));
 		System.out.println("please NOTE UR UNIQUE ID: "+reserid);
@@ -939,18 +1119,18 @@ public class Shiping {
 			 reservebn=new ReservationBean(reserid,rsId,credit.getUserID(),LocalDate.now(),schbean.getStartDate(),seats,tfare,"pending");
 			 
 			 
-			 
-	Shiping us=new Shiping();
-	ap=us.passengerInput(rsId,seats);
-			 
-	
-			 if(spp.paymentCredit())
-			 {
-				 System.out.println("payment success!"+reservebn.getNoOfSeats());
-				 cust.changeBookingStatus(reservebn);
-			 }
-			
-			
+//			 
+//	Shiping us=new Shiping();
+//	ap=us.passengerInput(rsId,seats);
+//			 
+//	
+//			 if(spp.paymentCredit())
+//			 {
+//				 System.out.println("payment success!");
+//				 cust.changeBookingStatus(reservebn);
+//			 }
+//			
+			System.out.println("Please do the payments!");
 		}
 		else {
 			System.out.println("No seats are reserved!");
@@ -968,6 +1148,8 @@ public class Shiping {
 	
 	public boolean paymentCredit() throws SQLException
 	{
+		loggr.info("Payment Details");
+		System.out.println("seats for the passenger will only be confired after the full payment!");
 		System.out.println("wanna pay?");
 		String payes=sc.nextLine();
 		if(payes.equalsIgnoreCase("yes"))
@@ -989,12 +1171,27 @@ public class Shiping {
 				System.out.println("card valid to");
 				String todate=sc.nextLine();
 				
-				System.out.println("balance payable");
+				System.out.println("balance");
 				int bal=sc.nextInt();
 				
+				if(bal<tfare) {
+					System.out.println("Balance is not enough! payment still pending.");
+					return false;
+				}
+				
+				System.out.println("Confirm Payment?(yes/no)");
+				sc.nextLine();
+				String confirmationPayment=sc.nextLine();
+				
+				if(confirmationPayment.equalsIgnoreCase("yes")) {
 				
 				PaymentBean paymentb=new PaymentBean(card,validate,todate,bal,credit.getUserID());
 				pay.process(paymentb);
+				}
+				else {
+					System.out.println("your confirmation is still pending!");
+					return false;
+				}
 				
 			}
 			return true;
@@ -1008,6 +1205,7 @@ public class Shiping {
 
 	public ArrayList<PassengerBean> passengerInput(String rsId,int seats)
 	{
+		loggr.info("Passenger Details");
 		ArrayList<PassengerBean> ap=new ArrayList<PassengerBean>();
 		 for(int j=0;j<seats;j++)
 			{

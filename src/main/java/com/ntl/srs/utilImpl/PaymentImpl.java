@@ -2,6 +2,8 @@ package com.ntl.srs.utilImpl;
 
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.ntl.srs.bean.PaymentBean;
 import com.ntl.srs.daoImpl.PaymentDaoImpl;
 import com.ntl.srs.util.Payment;
@@ -11,7 +13,7 @@ public class PaymentImpl implements Payment {
 	PaymentDaoImpl pay=new PaymentDaoImpl();
 	PaymentBean pb=new PaymentBean();
 	
-	
+	static Logger loggr=Logger.getLogger(PaymentImpl.class);
 	
 	
 	/**
@@ -29,6 +31,7 @@ public class PaymentImpl implements Payment {
 
 	
 	public boolean findByCardNumber(String userid, String cardnumber) throws SQLException {
+		loggr.info("finding card details");
 		pb=pay.findByID(userid, cardnumber);
 		if(pb!=null)
 		{
@@ -39,6 +42,7 @@ public class PaymentImpl implements Payment {
 
 	
 	public String process(PaymentBean payment ) throws SQLException {
+		loggr.info("processing balance details");
 		String state=pay.createPaymentBean(payment);
 		if(state!=null)
 		{
